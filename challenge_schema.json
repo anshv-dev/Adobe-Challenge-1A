@@ -1,37 +1,35 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Adobe Hackathon Challenge 1a Output Schema",
-  "description": "Schema for PDF title and heading extraction",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
-  "required": ["title", "outline"],
   "properties": {
     "title": {
-      "type": "string",
-      "description": "Document title"
+      "type": "string"
     },
     "outline": {
       "type": "array",
-      "description": "Document headings with levels and page numbers",
       "items": {
         "type": "object",
-        "required": ["level", "text", "page"],
         "properties": {
           "level": {
-            "type": "string",
-            "enum": ["H1", "H2", "H3"],
-            "description": "Heading level"
+            "type": "string"
           },
           "text": {
-            "type": "string",
-            "description": "Heading text content"
+            "type": "string"
           },
           "page": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Page number where heading appears"
+            "type": "integer"
           }
-        }
+        },
+        "required": [
+          "level",
+          "text",
+          "page"
+        ]
       }
     }
-  }
+  },
+  "required": [
+    "title",
+    "outline"
+  ]
 }

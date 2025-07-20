@@ -8,6 +8,14 @@ This is a comprehensive PDF processing solution built for Adobe Hackathon Challe
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (July 20, 2025)
+
+✓ Updated output schema to match exact Adobe Hackathon Challenge 1a requirements
+✓ Fixed web application processing flow with progress bars and status updates  
+✓ Implemented proper schema validation using the provided JSON schema
+✓ Resolved all display issues - results now show immediately after processing
+✓ Enhanced error handling and user feedback in Streamlit interface
+
 ## System Architecture
 
 The application follows a modular architecture with clear separation of concerns:

@@ -202,9 +202,10 @@ def process_pdfs(files, processor, max_pages):
             # Process PDF - extract title and headings
             result = processor.extract_title_and_headings(temp_path)
             
-            # Simple validation for challenge format
-            is_valid = 'title' in result and 'outline' in result
-            validation_errors = "" if is_valid else "Missing title or outline"
+            # Validate against challenge schema
+            from schema_validator import SchemaValidator
+            validator = SchemaValidator('challenge_schema.json')
+            is_valid, validation_errors = validator.validate(result)
             
             processing_time = time.time() - start_time
             
