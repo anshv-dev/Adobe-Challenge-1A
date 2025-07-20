@@ -1,0 +1,4 @@
+# System packages for Streamlit Cloud deployment
+# Required for PyMuPDF and PDF processing
+libgl1-mesa-glx
+libglib2.0-0

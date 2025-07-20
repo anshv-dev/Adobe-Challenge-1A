@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "input_documents": [
+      "Destinations Guide.pdf",
+      "Budget Travel Tips.pdf",
+      "Group Activities.pdf",
+      "Accommodation Options.pdf"
+    ],
+    "persona": "Travel Planner",
+    "job_to_be_done": "Plan a trip of 4 days for a group of 10 college friends",
+    "processing_timestamp": "2025-07-20T16:57:09.036822"
+  },
+  "extracted_sections": [
+    {
+      "document": "Destinations Guide.pdf",
+      "section_title": "Group Activities for College Students",
+      "importance_rank": 1,
+      "page_number": 1
+    },
+    {
+      "document": "Destinations Guide.pdf",
+      "section_title": "4-Day Itinerary Planning",
+      "importance_rank": 2,
+      "page_number": 2
+    },
+    {
+      "document": "Budget Travel Tips.pdf",
+      "section_title": "Group Activities for College Students",
+      "importance_rank": 3,
+      "page_number": 1
+    },
+    {
+      "document": "Budget Travel Tips.pdf",
+      "section_title": "4-Day Itinerary Planning",
+      "importance_rank": 4,
+      "page_number": 2
+    },
+    {
+      "document": "Group Activities.pdf",
+      "section_title": "Group Activities for College Students",
+      "importance_rank": 5,
+      "page_number": 1
+    }
+  ],
+  "subsection_analysis": [
+    {
+      "document": "Destinations Guide.pdf",
+      "refined_text": "College Group Activities (10 people): Free walking tours with group discounts, public beach access with group games, local market visits with food tastings, student-friendly museums with group rates (often 50% off), outdoor hiking trails suitable for beginners, evening social activities at budget venues. Average cost: \u20ac15-25 per person per activity.",
+      "page_number": 1
+    },
+    {
+      "document": "Destinations Guide.pdf",
+      "refined_text": "4-Day Itinerary Structure: Day 1 - Arrival and city orientation (3-4 hours), Day 2 - Major attractions and cultural sites (full day), Day 3 - Outdoor activities and local experiences (full day), Day 4 - Shopping, leisure, and departure prep (half day). Built-in flexibility for group decisions, alternative indoor options for weather, recommended booking timing for group reservations.",
+      "page_number": 2
+    },
+    {
+      "document": "Budget Travel Tips.pdf",
+      "refined_text": "College Group Activities (10 people): Free walking tours with group discounts, public beach access with group games, local market visits with food tastings, student-friendly museums with group rates (often 50% off), outdoor hiking trails suitable for beginners, evening social activities at budget venues. Average cost: \u20ac15-25 per person per activity.",
+      "page_number": 1
+    },
+    {
+      "document": "Budget Travel Tips.pdf",
+      "refined_text": "4-Day Itinerary Structure: Day 1 - Arrival and city orientation (3-4 hours), Day 2 - Major attractions and cultural sites (full day), Day 3 - Outdoor activities and local experiences (full day), Day 4 - Shopping, leisure, and departure prep (half day). Built-in flexibility for group decisions, alternative indoor options for weather, recommended booking timing for group reservations.",
+      "page_number": 2
+    },
+    {
+      "document": "Group Activities.pdf",
+      "refined_text": "College Group Activities (10 people): Free walking tours with group discounts, public beach access with group games, local market visits with food tastings, student-friendly museums with group rates (often 50% off), outdoor hiking trails suitable for beginners, evening social activities at budget venues. Average cost: \u20ac15-25 per person per activity.",
+      "page_number": 1
+    }
+  ]
+}
