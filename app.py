@@ -181,18 +181,16 @@ def main():
 def process_pdfs(files, processor, max_pages):
     """Process uploaded PDF files"""
     
-    # Clear previous results for new processing
-    for file in files:
-        st.session_state.processing_results[file.name] = {
-            'status': 'processing',
-            'start_time': time.time()
-        }
+    progress_bar = st.progress(0)
+    status_text = st.empty()
     
-    # Force UI update
-    st.rerun()
+    total_files = len(files)
     
-    # Process each file
-    for file in files:
+    for i, file in enumerate(files):
+        progress = (i + 1) / total_files
+        progress_bar.progress(progress)
+        status_text.text(f"Processing {file.name}...")
+        
         try:
             start_time = time.time()
             
@@ -217,19 +215,25 @@ def process_pdfs(files, processor, max_pages):
                 'json_data': result,
                 'schema_valid': is_valid,
                 'validation_errors': validation_errors,
-                'pages_processed': 1,  # Will be updated with actual page count
+                'pages_processed': 1,
                 'headings_found': len(result.get('outline', []))
             }
             
             # Clean up temp file
             os.remove(temp_path)
             
+            status_text.success(f"✅ {file.name} processed successfully!")
+            
         except Exception as e:
             st.session_state.processing_results[file.name] = {
                 'status': 'error',
                 'error': str(e),
-                'processing_time': time.time() - start_time
+                'processing_time': time.time() - start_time if 'start_time' in locals() else 0
             }
+            status_text.error(f"❌ Failed to process {file.name}: {str(e)}")
+    
+    progress_bar.progress(1.0)
+    status_text.success(f"🎉 Processing complete! {total_files} files processed.")
     
     # Force UI update after processing
     st.rerun()
