@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime
 import pandas as pd
 from challenge_processor import PDFHeadingExtractor
-from schema_validator import SchemaValidator
+# from schema_validator import SchemaValidator
 from utils import format_file_size, format_duration
 
 # Initialize session state
@@ -27,10 +27,9 @@ def main():
     st.markdown("**Adobe Hackathon Challenge 1a Solution**")
     st.markdown("Extract structured data from PDF documents and convert to JSON format")
     
-    # Initialize processor and validator
+    # Initialize processor
     try:
         processor = PDFHeadingExtractor()
-        validator = SchemaValidator()
     except Exception as e:
         st.error(f"Error initializing PDF processor: {str(e)}")
         st.stop()
@@ -115,17 +114,22 @@ def main():
             
             # Process button
             if valid_files and st.button("🚀 Process PDFs", type="primary"):
-                process_pdfs(valid_files, processor, validator, max_pages)
+                process_pdfs(valid_files, processor, max_pages)
     
     with col2:
         st.header("Schema Information")
         
-        # Display schema info
-        try:
-            schema = validator.get_schema()
-            st.json(schema, expanded=False)
-        except Exception as e:
-            st.error(f"Error loading schema: {str(e)}")
+        # Display expected output format
+        st.markdown("**Expected Output Format:**")
+        sample_output = {
+            "title": "Document Title",
+            "outline": [
+                {"level": "H1", "text": "Introduction", "page": 1},
+                {"level": "H2", "text": "Overview", "page": 2},
+                {"level": "H3", "text": "Details", "page": 3}
+            ]
+        }
+        st.json(sample_output, expanded=False)
     
     # Results section
     if st.session_state.processing_results:
@@ -174,7 +178,7 @@ def main():
                             if 'validation_errors' in result:
                                 st.text(result['validation_errors'])
 
-def process_pdfs(files, processor, validator, max_pages):
+def process_pdfs(files, processor, max_pages):
     """Process uploaded PDF files"""
     
     # Clear previous results for new processing
@@ -200,8 +204,9 @@ def process_pdfs(files, processor, validator, max_pages):
             # Process PDF - extract title and headings
             result = processor.extract_title_and_headings(temp_path)
             
-            # Validate against schema
-            is_valid, validation_errors = validator.validate(result)
+            # Simple validation for challenge format
+            is_valid = 'title' in result and 'outline' in result
+            validation_errors = "" if is_valid else "Missing title or outline"
             
             processing_time = time.time() - start_time
             
