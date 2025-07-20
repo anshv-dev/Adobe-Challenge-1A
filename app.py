@@ -6,7 +6,7 @@ import threading
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
-from pdf_processor import PDFProcessor
+from challenge_processor import PDFHeadingExtractor
 from schema_validator import SchemaValidator
 from utils import format_file_size, format_duration
 
@@ -29,7 +29,7 @@ def main():
     
     # Initialize processor and validator
     try:
-        processor = PDFProcessor()
+        processor = PDFHeadingExtractor()
         validator = SchemaValidator()
     except Exception as e:
         st.error(f"Error initializing PDF processor: {str(e)}")
@@ -142,7 +142,7 @@ def main():
                         st.success(f"✅ Processed successfully")
                         st.info(f"⏱️ Processing time: {result.get('processing_time', 0):.2f} seconds")
                         st.info(f"📊 Pages processed: {result.get('pages_processed', 0)}")
-                        st.info(f"📝 Text blocks extracted: {result.get('text_blocks', 0)}")
+                        st.info(f"📋 Headings extracted: {result.get('headings_found', 0)}")
                     elif status == 'error':
                         st.error(f"❌ Processing failed: {result.get('error', 'Unknown error')}")
                     elif status == 'processing':
@@ -197,8 +197,8 @@ def process_pdfs(files, processor, validator, max_pages):
             with open(temp_path, "wb") as f:
                 f.write(file.getvalue())
             
-            # Process PDF
-            result = processor.process_pdf(temp_path)
+            # Process PDF - extract title and headings
+            result = processor.extract_title_and_headings(temp_path)
             
             # Validate against schema
             is_valid, validation_errors = validator.validate(result)
@@ -212,8 +212,8 @@ def process_pdfs(files, processor, validator, max_pages):
                 'json_data': result,
                 'schema_valid': is_valid,
                 'validation_errors': validation_errors,
-                'pages_processed': result.get('document_info', {}).get('page_count', 0),
-                'text_blocks': len(result.get('content', {}).get('text_blocks', []))
+                'pages_processed': 1,  # Will be updated with actual page count
+                'headings_found': len(result.get('outline', []))
             }
             
             # Clean up temp file

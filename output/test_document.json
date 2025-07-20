@@ -1,153 +1,95 @@
 {
-  "document_info": {
-    "filename": "test_document.pdf",
-    "page_count": 1,
-    "total_pages": 1,
-    "processing_timestamp": "2025-07-20T09:14:17.497469",
-    "metadata": {
-      "title": "",
-      "author": "",
-      "subject": "",
-      "creator": "",
-      "producer": "",
-      "creation_date": "",
-      "modification_date": ""
+  "title": "Adobe Hackathon Challenge 1a Test PDF",
+  "outline": [
+    {
+      "level": "H1",
+      "text": "Adobe Hackathon Challenge 1a Test PDF",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Key Features:",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "· Text extraction",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "· Image detection",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "· Table recognition",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "· Metadata processing",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Performance Requirements:",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "- Process within 10 seconds for 50 pages",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "- Memory usage under 16GB",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "- CPU optimization for AMD64",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "- No internet access during processing",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Table Example:",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Feature        Status    Performance",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Text Extract   ·         Fast",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Images        ·         Optimized",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Tables        ·         Detected",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Schema        ·         Valid",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "This document demonstrates the capabilities of the PDF processing engine",
+      "page": 1
     }
-  },
-  "content": {
-    "text_blocks": [
-      {
-        "page": 1,
-        "block_id": "page_1_block_0",
-        "type": "paragraph",
-        "text": "Adobe Hackathon Challenge 1a Test PDF",
-        "position": {
-          "x0": 72.0,
-          "y0": 59.099998474121094,
-          "x1": 295.43994140625,
-          "y1": 75.58799743652344
-        },
-        "fonts": [
-          "Helvetica"
-        ],
-        "font_sizes": [
-          12.0
-        ]
-      },
-      {
-        "page": 1,
-        "block_id": "page_1_block_1",
-        "type": "paragraph",
-        "text": "This is a sample PDF document for testing the PDF processing solution.",
-        "position": {
-          "x0": 72.0,
-          "y0": 92.0759506225586,
-          "x1": 454.8119201660156,
-          "y1": 108.56394958496094
-        },
-        "fonts": [
-          "Helvetica"
-        ],
-        "font_sizes": [
-          12.0
-        ]
-      },
-      {
-        "page": 1,
-        "block_id": "page_1_block_2",
-        "type": "caption",
-        "text": "Key Features:\n· Text extraction\n· Image detection\n· Table recognition\n· Metadata processing",
-        "position": {
-          "x0": 72.0,
-          "y0": 125.0519027709961,
-          "x1": 190.05596923828125,
-          "y1": 207.49180603027344
-        },
-        "fonts": [
-          "Helvetica"
-        ],
-        "font_sizes": [
-          12.0
-        ]
-      },
-      {
-        "page": 1,
-        "block_id": "page_1_block_3",
-        "type": "list",
-        "text": "Performance Requirements:\n- Process within 10 seconds for 50 pages\n- Memory usage under 16GB\n- CPU optimization for AMD64\n- No internet access during processing",
-        "position": {
-          "x0": 72.0,
-          "y0": 223.97976684570312,
-          "x1": 291.43194580078125,
-          "y1": 306.419677734375
-        },
-        "fonts": [
-          "Helvetica"
-        ],
-        "font_sizes": [
-          12.0
-        ]
-      },
-      {
-        "page": 1,
-        "block_id": "page_1_block_4",
-        "type": "caption",
-        "text": "Table Example:\nFeature        Status    Performance\nText Extract   ·         Fast\nImages        ·         Optimized\nTables        ·         Detected\nSchema        ·         Valid",
-        "position": {
-          "x0": 72.0,
-          "y0": 322.90765380859375,
-          "x1": 256.0919494628906,
-          "y1": 421.835693359375
-        },
-        "fonts": [
-          "Helvetica"
-        ],
-        "font_sizes": [
-          12.0
-        ]
-      },
-      {
-        "page": 1,
-        "block_id": "page_1_block_5",
-        "type": "paragraph",
-        "text": "This document demonstrates the capabilities of the PDF processing engine\ndesigned specifically for the Adobe Hackathon Challenge 1a requirements.",
-        "position": {
-          "x0": 72.0,
-          "y0": 438.3236999511719,
-          "x1": 470.8439025878906,
-          "y1": 471.2997131347656
-        },
-        "fonts": [
-          "Helvetica"
-        ],
-        "font_sizes": [
-          12.0
-        ]
-      }
-    ],
-    "images": [],
-    "tables": [],
-    "page_structure": [
-      {
-        "page": 1,
-        "dimensions": {
-          "width": 595.0,
-          "height": 842.0
-        },
-        "text_coverage": 13.80915592188785,
-        "element_counts": {
-          "text_blocks": 6,
-          "images": 0
-        },
-        "layout_type": "standard"
-      }
-    ]
-  },
-  "extraction_summary": {
-    "total_text_blocks": 6,
-    "total_images": 0,
-    "total_tables": 0,
-    "processing_complete": true,
-    "processing_time_seconds": 0.017218828201293945
-  }
+  ]
 }

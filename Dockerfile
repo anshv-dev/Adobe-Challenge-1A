@@ -1,4 +1,4 @@
-# Adobe Hackathon Challenge 1a - PDF Processing Docker Container
+# Adobe Hackathon Challenge 1a - PDF Title and Heading Extraction
 # Optimized for AMD64 architecture with performance constraints
 
 FROM --platform=linux/amd64 python:3.10-slim
@@ -12,12 +12,11 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies directly (no requirements.txt needed)
+RUN pip install --no-cache-dir PyMuPDF==1.23.26
 
 # Copy the processing script
-COPY process_pdfs.py .
+COPY challenge_processor.py .
 
 # Set environment variables for optimal performance
 ENV PYTHONUNBUFFERED=1
@@ -27,4 +26,4 @@ ENV PYTHONDONTWRITEBYTECODE=1
 RUN mkdir -p /app/input /app/output
 
 # Run the PDF processor
-CMD ["python", "process_pdfs.py"]
+CMD ["python", "challenge_processor.py"]
