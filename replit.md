@@ -22,6 +22,9 @@ Preferred communication style: Simple, everyday language.
 ✓ Enhanced output with detailed subsection analysis and comprehensive content generation
 ✓ Validated performance constraints: CPU-only, <1GB model, <60s processing, offline operation
 ✓ Created demonstration scripts and sample outputs for both challenges
+✓ **NEW FEATURE**: Real-time document relevance heat map with interactive visualization
+✓ Added Plotly-based heat maps showing document relevance by page and section
+✓ Implemented keyword frequency analysis and persona-specific insights visualization
 
 ## System Architecture
 

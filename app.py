@@ -6,6 +6,10 @@ import threading
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from challenge_processor import PDFHeadingExtractor
 from challenge1b_processor import PersonaDrivenDocumentAnalyst
 # from schema_validator import SchemaValidator
@@ -351,8 +355,8 @@ def handle_challenge_1b():
                 # Display results
                 st.success("✅ Analysis completed!")
                 
-                # Results display
-                display_challenge1b_results(result)
+                # Results display with heat map
+                display_challenge1b_results_with_heatmap(result, persona_role, job_task)
                 
                 # Clean up temp files
                 for temp_path in temp_files:
@@ -369,10 +373,172 @@ def handle_challenge_1b():
     else:
         st.info("👆 Please upload PDF documents to begin")
 
-def display_challenge1b_results(result):
-    """Display Challenge 1B analysis results"""
+def display_challenge1b_results_with_heatmap(result, persona_role, job_task):
+    """Display Challenge 1B analysis results with real-time relevance heat map"""
     
     st.header("📊 Analysis Results")
+    
+    # Create tabs for different views
+    tab1, tab2, tab3 = st.tabs(["🔥 Relevance Heat Map", "📋 Analysis Results", "💾 Export Options"])
+    
+    with tab1:
+        # Real-time Document Relevance Heat Map
+        create_relevance_heatmap(result, persona_role, job_task)
+    
+    with tab2:
+        # Original results display
+        display_traditional_results(result)
+    
+    with tab3:
+        # Export options
+        display_export_options(result)
+
+def create_relevance_heatmap(result, persona_role, job_task):
+    """Create interactive relevance heat map visualization"""
+    
+    st.subheader("🔥 Real-time Document Relevance Heat Map")
+    st.markdown("Visual representation of document sections ranked by relevance to your persona and job")
+    
+    extracted_sections = result.get("extracted_sections", [])
+    
+    if not extracted_sections:
+        st.warning("No sections available for heat map visualization")
+        return
+    
+    # Prepare data for heat map
+    heatmap_data = []
+    documents = list(set([section["document"] for section in extracted_sections]))
+    max_pages = max([section["page_number"] for section in extracted_sections])
+    
+    # Create matrix for heat map
+    heat_matrix = []
+    doc_labels = []
+    page_labels = []
+    hover_text = []
+    
+    for doc in documents:
+        doc_sections = [s for s in extracted_sections if s["document"] == doc]
+        doc_heat_row = []
+        doc_hover_row = []
+        
+        for page in range(1, max_pages + 1):
+            page_sections = [s for s in doc_sections if s["page_number"] == page]
+            
+            if page_sections:
+                # Calculate average relevance for this page
+                total_score = sum([s.get("relevance_score", 0) for s in page_sections])
+                avg_score = total_score / len(page_sections)
+                
+                # Get section titles for hover
+                section_titles = [s["section_title"] for s in page_sections]
+                hover_info = f"Document: {doc}<br>Page: {page}<br>Sections: {', '.join(section_titles)}<br>Relevance: {avg_score:.2f}"
+            else:
+                avg_score = 0
+                hover_info = f"Document: {doc}<br>Page: {page}<br>No relevant sections"
+            
+            doc_heat_row.append(avg_score)
+            doc_hover_row.append(hover_info)
+        
+        heat_matrix.append(doc_heat_row)
+        hover_text.append(doc_hover_row)
+        doc_labels.append(doc.replace('.pdf', ''))
+    
+    page_labels = [f"Page {i}" for i in range(1, max_pages + 1)]
+    
+    # Create interactive heat map
+    fig = go.Figure(data=go.Heatmap(
+        z=heat_matrix,
+        x=page_labels,
+        y=doc_labels,
+        hovertemplate='%{hovertext}<extra></extra>',
+        hovertext=hover_text,
+        colorscale='Reds',
+        colorbar=dict(title="Relevance Score"),
+        zmin=0,
+        zmax=max([max(row) for row in heat_matrix]) if heat_matrix else 1
+    ))
+    
+    fig.update_layout(
+        title=f"Document Relevance for {persona_role}: {job_task[:50]}...",
+        xaxis_title="Pages",
+        yaxis_title="Documents",
+        height=400,
+        font=dict(size=12)
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Section importance bar chart
+    st.subheader("📊 Section Importance Ranking")
+    
+    if extracted_sections:
+        # Prepare data for bar chart
+        chart_data = []
+        for section in extracted_sections[:10]:  # Top 10 sections
+            chart_data.append({
+                "Section": section["section_title"][:30] + "..." if len(section["section_title"]) > 30 else section["section_title"],
+                "Relevance Score": section.get("relevance_score", 0),
+                "Document": section["document"].replace('.pdf', ''),
+                "Page": section["page_number"],
+                "Rank": section["importance_rank"]
+            })
+        
+        chart_df = pd.DataFrame(chart_data)
+        
+        # Create bar chart
+        fig_bar = px.bar(
+            chart_df,
+            x="Relevance Score",
+            y="Section",
+            color="Document",
+            orientation='h',
+            title="Top 10 Most Relevant Sections",
+            hover_data=["Page", "Rank"],
+            height=400
+        )
+        
+        fig_bar.update_layout(yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(fig_bar, use_container_width=True)
+    
+    # Persona keyword relevance
+    st.subheader("🎯 Persona Keyword Analysis")
+    
+    # Create keyword relevance analysis
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Persona keywords found
+        persona_keywords = get_persona_keywords(persona_role)
+        job_keywords = extract_job_keywords(job_task)
+        
+        st.markdown(f"**Persona Keywords for {persona_role}:**")
+        st.write(", ".join(persona_keywords[:10]))
+        
+        st.markdown(f"**Job-Specific Keywords:**")
+        st.write(", ".join(job_keywords[:10]))
+    
+    with col2:
+        # Keyword frequency in sections
+        keyword_freq = analyze_keyword_frequency(extracted_sections, persona_keywords + job_keywords)
+        
+        if keyword_freq:
+            freq_data = list(keyword_freq.items())
+            freq_df = pd.DataFrame(freq_data, columns=["Keyword", "Frequency"])
+            freq_df = freq_df.sort_values("Frequency", ascending=False).head(8)
+            
+            fig_freq = px.bar(
+                freq_df,
+                x="Frequency",
+                y="Keyword",
+                orientation='h',
+                title="Keyword Frequency in Relevant Sections",
+                height=300
+            )
+            fig_freq.update_layout(yaxis={'categoryorder':'total ascending'})
+            st.plotly_chart(fig_freq, use_container_width=True)
+
+def display_traditional_results(result):
+    """Display traditional analysis results"""
     
     # Metadata section
     metadata = result.get("metadata", {})
@@ -462,6 +628,103 @@ DETAILED CONTENT ANALYSIS:
             file_name=f"challenge1b_summary_{metadata.get('processing_timestamp', 'unknown').replace(':', '-')}.txt",
             mime="text/plain"
         )
+
+def display_export_options(result):
+    """Display export options for analysis results"""
+    
+    metadata = result.get("metadata", {})
+    
+    st.subheader("💾 Export Results")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # JSON download
+        json_str = json.dumps(result, indent=2)
+        st.download_button(
+            label="📥 Download Full Analysis (JSON)",
+            data=json_str,
+            file_name=f"challenge1b_analysis_{metadata.get('processing_timestamp', 'unknown').replace(':', '-')}.json",
+            mime="application/json"
+        )
+    
+    with col2:
+        # Summary download
+        summary = f"""
+PERSONA-DRIVEN DOCUMENT ANALYSIS SUMMARY
+
+Persona: {metadata.get('persona', 'Unknown')}
+Job to be Done: {metadata.get('job_to_be_done', 'Unknown')}
+Documents Analyzed: {len(metadata.get('input_documents', []))}
+Processing Time: {metadata.get('processing_timestamp', 'Unknown')}
+
+TOP RELEVANT SECTIONS:
+{chr(10).join([f"{i+1}. {s['section_title']} ({s['document']}, Page {s['page_number']})" 
+               for i, s in enumerate(result.get('extracted_sections', [])[:5])])}
+
+DETAILED CONTENT ANALYSIS:
+{chr(10).join([f"- {a['document']} (Page {a['page_number']}): {a['refined_text'][:100]}..." 
+               for a in result.get('subsection_analysis', [])[:3]])}
+        """
+        
+        st.download_button(
+            label="📄 Download Summary (TXT)",
+            data=summary.strip(),
+            file_name=f"challenge1b_summary_{metadata.get('processing_timestamp', 'unknown').replace(':', '-')}.txt",
+            mime="text/plain"
+        )
+
+def get_persona_keywords(persona_role):
+    """Get relevant keywords for a persona"""
+    
+    persona_keywords = {
+        "food contractor": ["ingredients", "recipe", "menu", "dietary", "nutrition", "cooking", "preparation", "serving"],
+        "travel planner": ["destination", "itinerary", "activities", "accommodation", "transport", "budget", "attractions"],
+        "academic researcher": ["methodology", "analysis", "research", "study", "data", "results", "conclusions"],
+        "business analyst": ["strategy", "analysis", "metrics", "performance", "trends", "market", "revenue"],
+        "student": ["concepts", "definition", "examples", "theory", "practice", "learning", "education"],
+        "investment analyst": ["financial", "investment", "portfolio", "risk", "returns", "market", "valuation"],
+        "journalist": ["facts", "sources", "investigation", "reporting", "news", "interviews", "story"]
+    }
+    
+    return persona_keywords.get(persona_role.lower(), ["relevant", "important", "key", "essential", "critical"])
+
+def extract_job_keywords(job_task):
+    """Extract important keywords from job description"""
+    
+    # Simple keyword extraction based on common terms
+    important_words = []
+    words = job_task.lower().split()
+    
+    # Common important words in job descriptions
+    job_related_terms = {
+        "plan", "prepare", "create", "develop", "analyze", "research", "investigate", 
+        "design", "implement", "manage", "organize", "coordinate", "review", "evaluate",
+        "vegetarian", "gluten-free", "buffet", "menu", "corporate", "gathering",
+        "trip", "travel", "budget", "group", "college", "friends", "days", "itinerary"
+    }
+    
+    for word in words:
+        clean_word = word.strip('.,!?;:').lower()
+        if clean_word in job_related_terms and len(clean_word) > 3:
+            important_words.append(clean_word)
+    
+    return list(set(important_words))
+
+def analyze_keyword_frequency(sections, keywords):
+    """Analyze frequency of keywords in extracted sections"""
+    
+    keyword_freq = {keyword: 0 for keyword in keywords}
+    
+    for section in sections:
+        section_text = (section.get("section_title", "") + " " + section.get("content", "")).lower()
+        
+        for keyword in keywords:
+            if keyword.lower() in section_text:
+                keyword_freq[keyword] += 1
+    
+    # Return only keywords that appear at least once
+    return {k: v for k, v in keyword_freq.items() if v > 0}
 
 if __name__ == "__main__":
     main()
