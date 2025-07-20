@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a PDF processing application built for Adobe Hackathon Challenge 1a that extracts structured data from PDF documents and converts it to JSON format. The application uses Streamlit for the web interface and PyMuPDF (fitz) for PDF processing, with built-in schema validation to ensure consistent output format.
+This is a comprehensive PDF processing solution built for Adobe Hackathon Challenge 1a that extracts structured data from PDF documents and converts it to JSON format. The solution provides both a command-line interface optimized for the challenge requirements and a Streamlit web interface for testing and validation. It uses PyMuPDF (fitz) for high-performance PDF processing, with built-in schema validation to ensure consistent output format.
 
 ## User Preferences
 
@@ -24,8 +24,19 @@ The application follows a modular architecture with clear separation of concerns
 
 ## Key Components
 
-### 1. Main Application (`app.py`)
-- **Purpose**: Streamlit web interface and orchestration
+### 1. Command-Line Processor (`process_pdfs.py`) - CHALLENGE SUBMISSION
+- **Purpose**: Main solution for Adobe Hackathon Challenge 1a
+- **Key Features**:
+  - Processes all PDFs from `/app/input` directory automatically
+  - Outputs JSON files to `/app/output` directory
+  - Optimized for 10-second performance constraint (50-page PDFs)
+  - Memory efficient (stays within 16GB limit)
+  - AMD64 architecture optimized
+  - No internet access required
+  - Comprehensive logging and performance metrics
+
+### 2. Web Application (`app.py`)
+- **Purpose**: Interactive interface for testing and validation
 - **Key Features**:
   - File upload handling with size and type validation
   - Real-time processing status updates using session state
