@@ -28,8 +28,12 @@ def main():
     st.markdown("Extract structured data from PDF documents and convert to JSON format")
     
     # Initialize processor and validator
-    processor = PDFProcessor()
-    validator = SchemaValidator()
+    try:
+        processor = PDFProcessor()
+        validator = SchemaValidator()
+    except Exception as e:
+        st.error(f"Error initializing PDF processor: {str(e)}")
+        st.stop()
     
     # Sidebar for configuration and stats
     with st.sidebar:
@@ -194,7 +198,7 @@ def process_pdfs(files, processor, validator, max_pages):
                 f.write(file.getvalue())
             
             # Process PDF
-            result = processor.process_pdf(temp_path, max_pages)
+            result = processor.process_pdf(temp_path)
             
             # Validate against schema
             is_valid, validation_errors = validator.validate(result)
@@ -208,7 +212,7 @@ def process_pdfs(files, processor, validator, max_pages):
                 'json_data': result,
                 'schema_valid': is_valid,
                 'validation_errors': validation_errors,
-                'pages_processed': result.get('page_count', 0),
+                'pages_processed': result.get('document_info', {}).get('page_count', 0),
                 'text_blocks': len(result.get('content', {}).get('text_blocks', []))
             }
             
