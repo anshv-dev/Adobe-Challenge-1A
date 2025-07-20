@@ -1,0 +1,247 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PDF Processing Output Schema",
+  "description": "Schema for structured data extracted from PDF documents - Adobe Hackathon Challenge 1a",
+  "type": "object",
+  "required": ["document_info", "content", "extraction_summary"],
+  "properties": {
+    "document_info": {
+      "type": "object",
+      "required": ["filename", "page_count", "processing_timestamp"],
+      "properties": {
+        "filename": {
+          "type": "string",
+          "description": "Name of the processed PDF file"
+        },
+        "page_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of pages processed"
+        },
+        "total_pages": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of pages in the document"
+        },
+        "processing_timestamp": {
+          "type": "string",
+          "description": "ISO timestamp when processing completed"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Document metadata extracted from PDF",
+          "properties": {
+            "title": {"type": "string"},
+            "author": {"type": "string"},
+            "subject": {"type": "string"},
+            "creator": {"type": "string"},
+            "producer": {"type": "string"},
+            "creation_date": {"type": "string"},
+            "modification_date": {"type": "string"}
+          }
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": ["text_blocks", "images", "tables", "page_structure"],
+      "properties": {
+        "text_blocks": {
+          "type": "array",
+          "description": "All text blocks extracted from the document",
+          "items": {
+            "type": "object",
+            "required": ["page", "block_id", "type", "text"],
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Page number (1-indexed)"
+              },
+              "block_id": {
+                "type": "string",
+                "description": "Unique identifier for the text block"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["header", "paragraph", "list", "table_text", "caption", "unknown"],
+                "description": "Classified type of the text block"
+              },
+              "text": {
+                "type": "string",
+                "description": "The actual text content"
+              },
+              "position": {
+                "type": "object",
+                "description": "Bounding box coordinates",
+                "properties": {
+                  "x0": {"type": "number"},
+                  "y0": {"type": "number"},
+                  "x1": {"type": "number"},
+                  "y1": {"type": "number"}
+                }
+              },
+              "fonts": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Font families used in this block"
+              },
+              "font_sizes": {
+                "type": "array",
+                "items": {"type": "number"},
+                "description": "Font sizes used in this block"
+              }
+            }
+          }
+        },
+        "images": {
+          "type": "array",
+          "description": "All images found in the document",
+          "items": {
+            "type": "object",
+            "required": ["page", "image_id"],
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Page number where image is located"
+              },
+              "image_id": {
+                "type": "string",
+                "description": "Unique identifier for the image"
+              },
+              "width": {
+                "type": "integer",
+                "description": "Image width in pixels"
+              },
+              "height": {
+                "type": "integer",
+                "description": "Image height in pixels"
+              },
+              "colorspace": {
+                "type": "string",
+                "description": "Color space of the image"
+              },
+              "format": {
+                "type": "string",
+                "description": "Image format type"
+              }
+            }
+          }
+        },
+        "tables": {
+          "type": "array",
+          "description": "All tables detected in the document",
+          "items": {
+            "type": "object",
+            "required": ["page", "table_id", "type"],
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Page number where table is located"
+              },
+              "table_id": {
+                "type": "string",
+                "description": "Unique identifier for the table"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type classification of the table"
+              },
+              "rows": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Number of rows in the table"
+              },
+              "columns": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Number of columns in the table"
+              },
+              "position": {
+                "type": "object",
+                "description": "Table position information"
+              },
+              "data": {
+                "type": "array",
+                "description": "Table data as array of rows",
+                "items": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Row data as array of cell values"
+                }
+              }
+            }
+          }
+        },
+        "page_structure": {
+          "type": "array",
+          "description": "Structural analysis of each page",
+          "items": {
+            "type": "object",
+            "required": ["page"],
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Page number"
+              },
+              "dimensions": {
+                "type": "object",
+                "description": "Page dimensions",
+                "properties": {
+                  "width": {"type": "number"},
+                  "height": {"type": "number"}
+                }
+              },
+              "text_coverage": {
+                "type": "number",
+                "description": "Percentage of page covered by text"
+              },
+              "element_counts": {
+                "type": "object",
+                "description": "Count of different element types",
+                "properties": {
+                  "text_blocks": {"type": "integer"},
+                  "images": {"type": "integer"}
+                }
+              },
+              "layout_type": {
+                "type": "string",
+                "enum": ["text_heavy", "image_heavy", "mixed", "standard", "empty"],
+                "description": "Classification of page layout type"
+              }
+            }
+          }
+        }
+      }
+    },
+    "extraction_summary": {
+      "type": "object",
+      "required": ["processing_complete"],
+      "description": "Summary of the extraction process",
+      "properties": {
+        "total_text_blocks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of text blocks extracted"
+        },
+        "total_images": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of images found"
+        },
+        "total_tables": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of tables detected"
+        },
+        "processing_complete": {
+          "type": "boolean",
+          "description": "Whether processing completed successfully"
+        }
+      }
+    }
+  }
+}
