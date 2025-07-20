@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "input_documents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "persona": {
+          "type": "string"
+        },
+        "job_to_be_done": {
+          "type": "string"
+        },
+        "processing_timestamp": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "input_documents",
+        "persona", 
+        "job_to_be_done",
+        "processing_timestamp"
+      ]
+    },
+    "extracted_sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string"
+          },
+          "section_title": {
+            "type": "string"
+          },
+          "importance_rank": {
+            "type": "integer"
+          },
+          "page_number": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document",
+          "section_title",
+          "importance_rank",
+          "page_number"
+        ]
+      }
+    },
+    "subsection_analysis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string"
+          },
+          "refined_text": {
+            "type": "string"
+          },
+          "page_number": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document",
+          "refined_text",
+          "page_number"
+        ]
+      }
+    }
+  },
+  "required": [
+    "metadata",
+    "extracted_sections",
+    "subsection_analysis"
+  ]
+}

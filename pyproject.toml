@@ -6,6 +6,7 @@ requires-python = ">=3.11"
 dependencies = [
     "fitz>=0.0.1.dev2",
     "jsonschema>=4.25.0",
+    "openai>=1.97.0",
     "pandas>=2.3.1",
     "psutil>=7.0.0",
     "pymupdf>=1.26.3",

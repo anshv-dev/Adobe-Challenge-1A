@@ -7,6 +7,7 @@ from pathlib import Path
 from datetime import datetime
 import pandas as pd
 from challenge_processor import PDFHeadingExtractor
+from challenge1b_processor import PersonaDrivenDocumentAnalyst
 # from schema_validator import SchemaValidator
 from utils import format_file_size, format_duration
 
@@ -23,16 +24,30 @@ def main():
         layout="wide"
     )
     
-    st.title("📄 PDF to JSON Processor")
-    st.markdown("**Adobe Hackathon Challenge 1a Solution**")
-    st.markdown("Extract structured data from PDF documents and convert to JSON format")
+    st.title("📄 Adobe Hackathon PDF Processor")
     
-    # Initialize processor
+    # Challenge selection
+    challenge_type = st.selectbox(
+        "Select Challenge:",
+        ["Challenge 1A: PDF Title & Heading Extraction", "Challenge 1B: Persona-Driven Document Intelligence"],
+        key="challenge_selector"
+    )
+    
+    if "1A" in challenge_type:
+        st.markdown("**Extract title and headings (H1, H2, H3) from PDF documents**")
+        handle_challenge_1a()
+    else:
+        st.markdown("**Intelligent document analyst for persona-driven section extraction**")
+        handle_challenge_1b()
+
+def handle_challenge_1a():
+    """Handle Challenge 1A: PDF Title & Heading Extraction"""
+    
     try:
         processor = PDFHeadingExtractor()
     except Exception as e:
         st.error(f"Error initializing PDF processor: {str(e)}")
-        st.stop()
+        return
     
     # Sidebar for configuration and stats
     with st.sidebar:
@@ -238,6 +253,215 @@ def process_pdfs(files, processor, max_pages):
     
     # Force UI update after processing
     st.rerun()
+
+def handle_challenge_1b():
+    """Handle Challenge 1B: Persona-Driven Document Intelligence"""
+    
+    st.markdown("---")
+    
+    # Input section for Challenge 1B
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📋 Persona & Job Definition")
+        
+        # Persona input
+        persona_role = st.selectbox(
+            "Select Persona:",
+            ["Food Contractor", "Academic Researcher", "Investment Analyst", "Business Analyst", 
+             "Student", "Journalist", "Sales Representative", "Custom"],
+            key="persona_selector"
+        )
+        
+        if persona_role == "Custom":
+            persona_role = st.text_input("Enter Custom Persona:", placeholder="e.g., Marketing Manager")
+        
+        # Job-to-be-done input
+        job_task = st.text_area(
+            "Job to be Done:",
+            placeholder="Describe the specific task this persona needs to accomplish...",
+            height=100,
+            key="job_input"
+        )
+        
+        # Example jobs for different personas
+        if st.button("💡 Show Example Jobs"):
+            examples = {
+                "Food Contractor": "Prepare a vegetarian buffet-style dinner menu for a corporate gathering, including gluten-free items.",
+                "Academic Researcher": "Prepare a comprehensive literature review focusing on methodologies, datasets, and performance benchmarks",
+                "Investment Analyst": "Analyze revenue trends, R&D investments, and market positioning strategies",
+                "Student": "Identify key concepts and mechanisms for exam preparation on reaction kinetics"
+            }
+            if persona_role in examples:
+                st.info(f"Example: {examples[persona_role]}")
+    
+    with col2:
+        st.subheader("📄 Document Collection")
+        
+        # File upload for multiple documents
+        uploaded_files = st.file_uploader(
+            "Upload PDF Documents (3-10 files recommended):",
+            type=["pdf"],
+            accept_multiple_files=True,
+            key="challenge1b_files"
+        )
+        
+        if uploaded_files:
+            st.success(f"📁 {len(uploaded_files)} documents uploaded")
+            
+            # Show uploaded files
+            for i, file in enumerate(uploaded_files):
+                st.text(f"{i+1}. {file.name} ({format_file_size(len(file.getvalue()))})")
+    
+    # Processing section
+    if uploaded_files and persona_role and job_task:
+        st.markdown("---")
+        
+        if st.button("🔍 Analyze Documents", type="primary", key="process_1b"):
+            
+            # Prepare input data
+            input_data = {
+                "challenge_info": {
+                    "challenge_id": "round_1b_001",
+                    "test_case_name": "document_analysis",
+                    "description": "Persona-driven document intelligence"
+                },
+                "documents": [{"filename": file.name, "title": file.name.replace('.pdf', '')} 
+                             for file in uploaded_files],
+                "persona": {"role": persona_role},
+                "job_to_be_done": {"task": job_task}
+            }
+            
+            # Save uploaded files temporarily
+            temp_files = []
+            for file in uploaded_files:
+                temp_path = f"/tmp/{file.name}"
+                with open(temp_path, "wb") as f:
+                    f.write(file.getvalue())
+                temp_files.append(temp_path)
+            
+            try:
+                # Initialize analyzer
+                analyzer = PersonaDrivenDocumentAnalyst()
+                
+                # Process documents
+                with st.spinner("🔍 Analyzing documents for persona-specific insights..."):
+                    result = analyzer.analyze_documents(input_data)
+                
+                # Display results
+                st.success("✅ Analysis completed!")
+                
+                # Results display
+                display_challenge1b_results(result)
+                
+                # Clean up temp files
+                for temp_path in temp_files:
+                    try:
+                        os.remove(temp_path)
+                    except:
+                        pass
+                        
+            except Exception as e:
+                st.error(f"❌ Analysis failed: {str(e)}")
+    
+    elif uploaded_files:
+        st.info("👆 Please define the persona and job-to-be-done to start analysis")
+    else:
+        st.info("👆 Please upload PDF documents to begin")
+
+def display_challenge1b_results(result):
+    """Display Challenge 1B analysis results"""
+    
+    st.header("📊 Analysis Results")
+    
+    # Metadata section
+    metadata = result.get("metadata", {})
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Documents Analyzed", len(metadata.get("input_documents", [])))
+    
+    with col2:
+        st.metric("Relevant Sections", len(result.get("extracted_sections", [])))
+    
+    with col3:
+        st.metric("Detailed Analysis", len(result.get("subsection_analysis", [])))
+    
+    # Show metadata
+    st.subheader("📋 Analysis Metadata")
+    st.json(metadata)
+    
+    # Extracted sections
+    if result.get("extracted_sections"):
+        st.subheader("🎯 Most Relevant Sections")
+        
+        sections_df = pd.DataFrame(result["extracted_sections"])
+        st.dataframe(sections_df, use_container_width=True)
+        
+        # Show top sections in detail
+        st.subheader("📖 Detailed Section Analysis")
+        
+        for i, section in enumerate(result["extracted_sections"][:3]):
+            with st.expander(f"#{section['importance_rank']} - {section['section_title']} (Page {section['page_number']})"):
+                st.write(f"**Document:** {section['document']}")
+                st.write(f"**Page:** {section['page_number']}")
+                st.write(f"**Importance Rank:** {section['importance_rank']}")
+    
+    # Subsection analysis
+    if result.get("subsection_analysis"):
+        st.subheader("🔍 Content Analysis")
+        
+        for analysis in result["subsection_analysis"]:
+            st.markdown(f"**{analysis['document']}** (Page {analysis['page_number']})")
+            st.text_area(
+                "Extracted Content:",
+                analysis["refined_text"],
+                height=100,
+                key=f"content_{analysis['document']}_{analysis['page_number']}"
+            )
+            st.markdown("---")
+    
+    # Download section
+    st.subheader("💾 Export Results")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # JSON download
+        json_str = json.dumps(result, indent=2)
+        st.download_button(
+            label="📥 Download Full Analysis (JSON)",
+            data=json_str,
+            file_name=f"challenge1b_analysis_{metadata.get('processing_timestamp', 'unknown').replace(':', '-')}.json",
+            mime="application/json"
+        )
+    
+    with col2:
+        # Summary download
+        summary = f"""
+PERSONA-DRIVEN DOCUMENT ANALYSIS SUMMARY
+
+Persona: {metadata.get('persona', 'Unknown')}
+Job to be Done: {metadata.get('job_to_be_done', 'Unknown')}
+Documents Analyzed: {len(metadata.get('input_documents', []))}
+Processing Time: {metadata.get('processing_timestamp', 'Unknown')}
+
+TOP RELEVANT SECTIONS:
+{chr(10).join([f"{i+1}. {s['section_title']} ({s['document']}, Page {s['page_number']})" 
+               for i, s in enumerate(result.get('extracted_sections', [])[:5])])}
+
+DETAILED CONTENT ANALYSIS:
+{chr(10).join([f"- {a['document']} (Page {a['page_number']}): {a['refined_text'][:100]}..." 
+               for a in result.get('subsection_analysis', [])[:3]])}
+        """
+        
+        st.download_button(
+            label="📄 Download Summary (TXT)",
+            data=summary.strip(),
+            file_name=f"challenge1b_summary_{metadata.get('processing_timestamp', 'unknown').replace(':', '-')}.txt",
+            mime="text/plain"
+        )
 
 if __name__ == "__main__":
     main()
