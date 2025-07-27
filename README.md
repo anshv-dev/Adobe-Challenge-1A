@@ -126,4 +126,4 @@ This solution is submitted for Adobe India Hackathon 2025. All code is original 
 
 # DEMO VIDEO LINK
 
-[![Watch the video](https://img.youtube.com/vi/qgjAGjISW98/0.jpg)](https://www.youtube.com/watch?v=qgjAGjISW98)
+[![Watch the video](https://img.youtube.com/vi/PRYi3-6oDJg/0.jpg)](https://www.youtube.com/watch?v=PRYi3-6oDJg)
