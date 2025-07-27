@@ -115,4 +115,10 @@ This solution is submitted for Adobe India Hackathon 2025. All code is original 
 
 ---
 
-**🎯 Ready for Evaluation**: Both challenges are complete, documented, and deployment-ready with comprehensive testing and validation.
+**Adobe Hackathon Challenge 1a - PDF Processing Solution Demo-Photos**  
+*Delivering high-performance, schema-compliant PDF to JSON conversion*
+
+<img width="1919" height="950" alt="Screenshot 2025-07-26 150522" src="https://github.com/user-attachments/assets/0f0c3bb3-8273-4ce6-840c-de9cd8f92f40" />
+<img width="1643" height="868" alt="Screenshot 2025-07-26 150544" src="https://github.com/user-attachments/assets/8fe73bf8-9ab6-41eb-b1d3-ec7882093690" />
+<img width="1919" height="933" alt="Screenshot 2025-07-26 150558" src="https://github.com/user-attachments/assets/bdf08b9e-b1a9-4cd0-8964-f8dbd55ccbb6" />
+<img width="1915" height="959" alt="Screenshot 2025-07-26 150623" src="https://github.com/user-attachments/assets/c0ac80cb-b274-43ab-8aee-9a1a7e9e4d33" />
