@@ -26,14 +26,14 @@ streamlit run src/app.py --server.port 5000
 
 ## 🛠 Technical Specifications
 
-| Requirement | Challenge 1A | Challenge 1B |
-|-------------|--------------|--------------|
-| **Processing Time** | <10 seconds | <60 seconds |
-| **Document Capacity** | 50-page PDFs | 3-10 documents |
-| **Model Size** | <200MB | <1GB |
-| **Architecture** | CPU-only AMD64 | CPU-only AMD64 |
-| **Dependencies** | Offline operation | Offline operation |
-| **Memory Usage** | <1GB | <1GB |
+| Requirement | Challenge 1A |
+|-------------|--------------|
+| **Processing Time** | <10 seconds |
+| **Document Capacity** | 50-page PDFs |
+| **Model Size** | <200MB | 
+| **Architecture** | CPU-only AMD64 |
+| **Dependencies** | Offline operation  |
+| **Memory Usage** | <1GB |
 
 ## 📁 Repository Structure
 
